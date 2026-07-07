@@ -57,14 +57,14 @@
   
 
   :root{
-    --paper: #EEEBE0;
-    --paper-2: #E4E0D2;
-    --ink: #21281F;
-    --ink-soft: #4B5245;
-    --moss: #55704F;
+    --paper: #EAE9E6;
+    --paper-2: #E0DDD5;
+    --ink: #111111;
+    --ink-soft: #6b6b66;
+    --moss: #FF6B15;
     --ochre: #B4832E;
     --rust: #A14E3C;
-    --line: #C7C2AE;
+    --line: #d8d6cf;
   }
 
   *{ box-sizing: border-box; }
@@ -72,7 +72,7 @@
   body{
     margin:0;
     font-family:'Inter', sans-serif;
-    background: #DAD6C8;
+    background: #DDDAD2;
     color: var(--ink);
     display:flex;
     min-height:100vh;
@@ -81,13 +81,17 @@
   .panel{
     width: 360px;
     flex-shrink:0;
-    background: #FBFAF6;
+    background: #F6F5F0;
     border-right: 1px solid var(--line);
+    border-top: 4px solid var(--moss);
     padding: 24px 22px 40px;
     overflow-y:auto;
     height:100vh;
     position:sticky;
     top:0;
+  }
+  .panel .brandrow{
+    display:flex; align-items:center; gap:8px; margin-bottom:2px;
   }
   .panel h1{
     font-family:'Fraunces', serif;
@@ -409,7 +413,10 @@
 <a href="./hub.html" style="position:fixed; top:14px; right:14px; z-index:999; background:#111111; color:#EAE9E6; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif; font-size:12.5px; font-weight:600; text-decoration:none; padding:8px 14px; border-radius:20px; box-shadow:0 2px 8px rgba(0,0,0,0.15);">← Back to hub</a>
 
 <div class="panel">
-  <h1>Field Notes</h1>
+  <div class="brandrow">
+    <svg width="18" height="18" viewBox="0 0 28 28" style="flex-shrink:0;"><path d="M2 14a12 12 0 0 1 24 0z" fill="#FF6B15"/></svg>
+    <h1>Social graphics builder</h1>
+  </div>
   <div class="sub">LinkedIn visual templates — portrait 4:5. Set your brand once, it's remembered next time.</div>
 
   <div class="section-label">Brand kit</div>
@@ -556,7 +563,7 @@ const STORAGE_KEY = "fieldNotesBrandSettings_v1";
 const PRESETS = [
   {
     id: "rhode-light",
-    name: "Rhode Light",
+    name: "rhode light",
     style: "editorial",
     colors: { paper:"#EAE9E6", ink:"#111111", inkSoft:"#7A7A75", body:"#22312E", primary:"#FF6B15", secondary:"#BADA55", ghost:"#E2E1DC", grainColor:"#000000", grainOpacity:0.025 },
     fonts: { display:"Radix Black", body:"Helvetica", mono:"Helvetica" },
@@ -566,7 +573,7 @@ const PRESETS = [
   },
   {
     id: "rhode-dark",
-    name: "Rhode Dark",
+    name: "rhode dark",
     style: "editorial",
     colors: { paper:"#131E1B", ink:"#EAE9E6", inkSoft:"#8B9A94", body:"#EAE9E6", primary:"#FF6B15", secondary:"#BADA55", ghost:"#17231F", grainColor:"#ffffff", grainOpacity:0.05 },
     fonts: { display:"Radix Black", body:"Helvetica", mono:"Helvetica" },
