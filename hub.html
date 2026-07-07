@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Rhode Digital — Tools Hub</title>
+<style>
+  :root{
+    --paper:#EAE9E6; --ink:#111111; --inkSoft:#6b6b66; --body:#22312E;
+    --primary:#FF6B15; --secondary:#BADA55; --line:#d8d6cf; --white:#fff;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    min-height:100vh;
+  }
+
+  /* ---- Password gate ---- */
+  #gate{
+    position:fixed; inset:0; background:var(--ink); display:flex;
+    align-items:center; justify-content:center; z-index:100;
+  }
+  #gate.hidden{ display:none; }
+  .gate-box{
+    background:var(--paper); border-radius:10px; padding:36px 32px; width:320px;
+    text-align:center;
+  }
+  .gate-box .dot{ display:inline-block; width:10px; height:10px; border-radius:50%; background:var(--primary); margin-bottom:14px; }
+  .gate-box h2{ margin:0 0 6px; font-size:18px; }
+  .gate-box p{ margin:0 0 20px; font-size:13px; color:var(--inkSoft); }
+  .gate-box input{
+    width:100%; padding:12px; border:1.5px solid var(--ink); border-radius:6px;
+    font-size:14px; margin-bottom:12px; text-align:center;
+  }
+  .gate-box button{
+    width:100%; padding:12px; border:none; border-radius:6px; background:var(--ink);
+    color:var(--paper); font-weight:600; font-size:14px; cursor:pointer;
+  }
+  .gate-box button:hover{ background:var(--body); }
+  .gate-error{ color:var(--primary); font-size:12.5px; margin-top:10px; min-height:16px; }
+
+  /* ---- Hub content ---- */
+  #hub{ display:none; }
+  #hub.visible{ display:block; }
+
+  header{
+    padding:32px 32px 24px; border-bottom:2px solid var(--ink);
+    display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:8px;
+  }
+  header h1{ margin:0; font-size:22px; letter-spacing:0.02em; }
+  header .tag{ color:var(--inkSoft); font-size:13px; }
+  .dot-inline{ display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--secondary); margin-right:8px; vertical-align:middle; }
+
+  .grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
+    gap:20px; padding:32px; max-width:1100px; margin:0 auto;
+  }
+  .tile{
+    background:var(--white); border:1.5px solid var(--ink); border-radius:10px;
+    padding:22px; text-decoration:none; color:var(--ink); display:block;
+    transition:transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .tile:hover{ transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,0.1); }
+  .tile .icon{
+    width:40px; height:40px; border-radius:8px; display:flex; align-items:center;
+    justify-content:center; font-size:18px; margin-bottom:14px; color:var(--white);
+  }
+  .tile .icon.orange{ background:var(--primary); }
+  .tile .icon.green{ background:var(--body); }
+  .tile .icon.lime{ background:var(--secondary); color:var(--ink); }
+  .tile h3{ margin:0 0 6px; font-size:16px; }
+  .tile p{ margin:0; font-size:13px; color:var(--inkSoft); line-height:1.5; }
+  .tile .badge{
+    display:inline-block; margin-top:12px; font-size:11px; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.04em; color:var(--inkSoft);
+  }
+  .tile.disabled{ opacity:0.55; cursor:default; }
+  .tile.disabled:hover{ transform:none; box-shadow:none; }
+
+  footer{ text-align:center; padding:24px; color:var(--inkSoft); font-size:12px; }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-box">
+    <span class="dot"></span>
+    <h2>Rhode Tools</h2>
+    <p>Internal use only — enter the password to continue.</p>
+    <input type="password" id="pw" placeholder="Password" autofocus>
+    <button id="unlockBtn">Unlock</button>
+    <div class="gate-error" id="gateError"></div>
+  </div>
+</div>
+
+<div id="hub">
+  <header>
+    <h1><span class="dot-inline"></span>Rhode Tools</h1>
+    <div class="tag">rachel &amp; tom — internal use only</div>
+  </header>
+
+  <div class="grid">
+    <a class="tile" href="./index.html">
+      <div class="icon orange">▦</div>
+      <h3>LinkedIn Templates</h3>
+      <p>Branded stat, process, comparison, and carousel graphics for LinkedIn — export as PNG or PDF.</p>
+      <span class="badge">Live</span>
+    </a>
+
+    <a class="tile" href="#" onclick="alert('This one still lives as a Claude tool for now — ask Rachel for the link.'); return false;">
+      <div class="icon green">✎</div>
+      <h3>Post Writer</h3>
+      <p>Turn a rough idea into a full caption + matching graphic copy, tuned to your voice.</p>
+      <span class="badge">Via Claude</span>
+    </a>
+
+    <div class="tile disabled">
+      <div class="icon lime">+</div>
+      <h3>More tools soon</h3>
+      <p>New tools land here as tiles as they're built.</p>
+    </div>
+  </div>
+
+  <footer>Rhode Digital — internal tools hub</footer>
+</div>
+
+<script>
+  // Change this to whatever password you want to share with Tom.
+  const HUB_PASSWORD = "fieldnotes";
+
+  const gate = document.getElementById('gate');
+  const hub = document.getElementById('hub');
+  const pwInput = document.getElementById('pw');
+  const errorEl = document.getElementById('gateError');
+
+  function tryUnlock(){
+    if(pwInput.value === HUB_PASSWORD){
+      sessionStorage.setItem('rhodeHubUnlocked', 'yes');
+      gate.classList.add('hidden');
+      hub.classList.add('visible');
+    } else {
+      errorEl.textContent = "That's not it — try again.";
+      pwInput.value = "";
+      pwInput.focus();
+    }
+  }
+
+  document.getElementById('unlockBtn').addEventListener('click', tryUnlock);
+  pwInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') tryUnlock(); });
+
+  if(sessionStorage.getItem('rhodeHubUnlocked') === 'yes'){
+    gate.classList.add('hidden');
+    hub.classList.add('visible');
+  }
+</script>
+
+</body>
+</html>
