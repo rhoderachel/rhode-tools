@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Rhode Digital — Tools Hub</title>
+<title>rhode — tools</title>
 <style>
   :root{
     --paper:#EAE9E6; --ink:#111111; --inkSoft:#6b6b66; --body:#22312E;
@@ -15,6 +15,9 @@
     min-height:100vh;
   }
 
+  .mark{ display:inline-flex; align-items:center; justify-content:center; }
+  .mark svg{ display:block; }
+
   /* ---- Password gate ---- */
   #gate{
     position:fixed; inset:0; background:var(--ink); display:flex;
@@ -22,15 +25,15 @@
   }
   #gate.hidden{ display:none; }
   .gate-box{
-    background:var(--paper); border-radius:10px; padding:36px 32px; width:320px;
-    text-align:center;
+    background:var(--paper); border-radius:10px; padding:40px 34px; width:320px;
+    text-align:center; border-top:4px solid var(--primary);
   }
-  .gate-box .dot{ display:inline-block; width:10px; height:10px; border-radius:50%; background:var(--primary); margin-bottom:14px; }
-  .gate-box h2{ margin:0 0 6px; font-size:18px; }
-  .gate-box p{ margin:0 0 20px; font-size:13px; color:var(--inkSoft); }
+  .gate-box .mark{ margin-bottom:16px; }
+  .gate-box .wordmark{ font-size:19px; font-weight:800; letter-spacing:-0.01em; margin:0 0 4px; }
+  .gate-box p{ margin:0 0 22px; font-size:13px; color:var(--inkSoft); }
   .gate-box input{
     width:100%; padding:12px; border:1.5px solid var(--ink); border-radius:6px;
-    font-size:14px; margin-bottom:12px; text-align:center;
+    font-size:14px; margin-bottom:12px; text-align:center; background:var(--white);
   }
   .gate-box button{
     width:100%; padding:12px; border:none; border-radius:6px; background:var(--ink);
@@ -44,12 +47,14 @@
   #hub.visible{ display:block; }
 
   header{
-    padding:32px 32px 24px; border-bottom:2px solid var(--ink);
-    display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:8px;
+    padding:36px 32px 26px; border-bottom:2px solid var(--ink);
+    display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    max-width:1100px; margin:0 auto;
   }
-  header h1{ margin:0; font-size:22px; letter-spacing:0.02em; }
-  header .tag{ color:var(--inkSoft); font-size:13px; }
-  .dot-inline{ display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--secondary); margin-right:8px; vertical-align:middle; }
+  .header-left{ display:flex; align-items:center; gap:12px; }
+  header .wordmark{ margin:0; font-size:22px; font-weight:800; letter-spacing:-0.01em; }
+  header .tagline{ color:var(--inkSoft); font-size:13.5px; margin:4px 0 0; font-style:italic; }
+  header .tag{ color:var(--inkSoft); font-size:12.5px; text-align:right; padding-top:6px; }
 
   .grid{
     display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
@@ -84,9 +89,11 @@
 
 <div id="gate">
   <div class="gate-box">
-    <span class="dot"></span>
-    <h2>Rhode Tools</h2>
-    <p>Internal use only — enter the password to continue.</p>
+    <span class="mark">
+      <svg width="28" height="28" viewBox="0 0 28 28"><path d="M2 14a12 12 0 0 1 24 0z" fill="#FF6B15"/></svg>
+    </span>
+    <p class="wordmark">rhode</p>
+    <p>tools — just for us. enter the password.</p>
     <input type="password" id="pw" placeholder="Password" autofocus>
     <button id="unlockBtn">Unlock</button>
     <div class="gate-error" id="gateError"></div>
@@ -95,15 +102,23 @@
 
 <div id="hub">
   <header>
-    <h1><span class="dot-inline"></span>Rhode Tools</h1>
+    <div class="header-left">
+      <span class="mark">
+        <svg width="26" height="26" viewBox="0 0 28 28"><path d="M2 14a12 12 0 0 1 24 0z" fill="#FF6B15"/></svg>
+      </span>
+      <div>
+        <p class="wordmark">rhode tools</p>
+        <p class="tagline">the bits behind the content, built by rachel &amp; claude.</p>
+      </div>
+    </div>
     <div class="tag">rachel &amp; tom — internal use only</div>
   </header>
 
   <div class="grid">
     <a class="tile" href="./index.html">
       <div class="icon orange">▦</div>
-      <h3>LinkedIn Templates</h3>
-      <p>Branded stat, process, comparison, and carousel graphics for LinkedIn — export as PNG or PDF.</p>
+      <h3>Social graphics builder</h3>
+      <p>Branded LinkedIn graphics — stats, processes, comparisons, carousels, and specimen cards — exported ready to post.</p>
       <span class="badge">Live</span>
     </a>
 
@@ -121,7 +136,7 @@
     </div>
   </div>
 
-  <footer>Rhode Digital — internal tools hub</footer>
+  <footer>rhode digital — internal tools hub</footer>
 </div>
 
 <script>
@@ -132,6 +147,7 @@
   const hub = document.getElementById('hub');
   const pwInput = document.getElementById('pw');
   const errorEl = document.getElementById('gateError');
+
 
   function tryUnlock(){
     if(pwInput.value === HUB_PASSWORD){
