@@ -88,7 +88,7 @@ textarea{ min-height:52px; line-height:1.4; }
   <div class="seg" id="templateSeg">
     <button data-t="stat" class="active">Stat</button>
     <button data-t="quote">Quote</button>
-    <button data-t="howto">How to tell</button>
+    <button data-t="howto">Infographic trio</button>
   </div>
 
   <div id="layoutPickerWrap">
@@ -152,10 +152,11 @@ const state = {
   theme: "dark",
   byline: "company",
   accent: "#fdc52c",
-  stat: { headline: "The number that should *scare* every sales team.", big: "17%", label: "of a buyer's time is spent with *any one supplier.*", source: "Source: Gartner" },
+  stat: { headline: "The number that should *scare* every sales team.", big: "17%", label: "of a buyer's time is spent with *any one supplier.*", source: "Source: Gartner", eyebrowGiant: "THE STAT", eyebrowHex: "THE NUMBER" },
   quote: { quote: "Most sales training fails because it teaches *what* to say, not *when* to say it.", attrib: "" },
   howto: {
     headline: "How to tell which *way* your sales programme failed.",
+    eyebrow: "HOW TO TELL",
     cards: [
       { title: "Was it a *Selection* failure?", body: "The behaviour is understood, but never becomes what people do day to day.", ask: "Can your managers point to specific deals this week where the trained behaviour appeared?" },
       { title: "Was it a *Transmission* failure?", body: "The behaviour works, but only for some people. Your best sellers do it.", ask: "Is the gap between top and bottom quartile growing despite consistent training?" },
@@ -427,7 +428,6 @@ function statSplit(svg, P){
   // diagonal slab on the right
   svg.appendChild(el("path", {d:"M600,0 L1080,0 L1080,1350 L460,1350 Z", fill:slabColor}));
 
-  pill(svg, 80, 110, "stat", P);
   // headline in navy zone
   drawHL(svg, state.stat.headline, 80, 470, 800, 62, 78, 420, {color:P.ink, hlColor:P.accent, hlTextColor:P.hlText});
 
@@ -444,14 +444,20 @@ function statSplit(svg, P){
 
 // GIANT — the number is the hero, cropped huge bottom-left, headline overlaps top-right
 function statGiant(svg, P){
-  // eyebrow (short, fixed)
-  const eb = el("text", {x:80, y:120, "font-family":"'Libre Franklin',sans-serif","font-weight":800,"font-size":26,"letter-spacing":"0.14em", fill:P.accent}); eb.textContent = "THE STAT"; svg.appendChild(eb);
+  // eyebrow (editable — leave blank to hide it entirely)
+  const ebText = (state.stat.eyebrowGiant || "").trim();
+  if(ebText){
+    const eb = el("text", {x:80, y:120, "font-family":"'Libre Franklin',sans-serif","font-weight":800,"font-size":26,"letter-spacing":"0.14em", fill:P.accent}); eb.textContent = ebText.toUpperCase(); svg.appendChild(eb);
+  }
 
-  // giant number, cropped, anchored low-left; size so it fills width but keeps the last glyph in frame
+  // giant number, cropped, anchored low-left; sized so the gap from the left edge to
+  // the '1' matches the gap from the right edge to the '%' (24px margin each side)
   const num = state.stat.big;
+  const margin = 24;
+  const maxNumWidth = 1080 - margin*2;
   let size = 720;
-  while(measure(num, 800, size, "-0.05em") > 1120 && size > 300){ size -= 20; }
-  const big = el("text", {x:24, y:1170, "font-family":"'Libre Franklin',sans-serif","font-weight":800,"font-size":size,"letter-spacing":"-0.05em", fill:P.accent}); big.textContent = num; svg.appendChild(big);
+  while(measure(num, 800, size, "-0.05em") > maxNumWidth && size > 300){ size -= 20; }
+  const big = el("text", {x:margin, y:1170, "font-family":"'Libre Franklin',sans-serif","font-weight":800,"font-size":size,"letter-spacing":"-0.05em", fill:P.accent}); big.textContent = num; svg.appendChild(big);
 
   // label block, upper-right, overlapping the number's top
   drawHL(svg, state.stat.label, 460, 360, 800, 58, 72, 560, {color:P.ink, hlColor:P.accent, hlTextColor:P.hlText});
@@ -462,7 +468,10 @@ function statGiant(svg, P){
 
 // HEXAGON — the stat lives inside a large accent hexagon, headline below
 function statHex(svg, P){
-  const eb = el("text", {x:80, y:130, "font-family":"'Libre Franklin',sans-serif","font-weight":800,"font-size":26,"letter-spacing":"0.12em", fill:P.accent}); eb.textContent="THE NUMBER"; svg.appendChild(eb);
+  const ebText = (state.stat.eyebrowHex || "").trim();
+  if(ebText){
+    const eb = el("text", {x:80, y:130, "font-family":"'Libre Franklin',sans-serif","font-weight":800,"font-size":26,"letter-spacing":"0.12em", fill:P.accent}); eb.textContent = ebText.toUpperCase(); svg.appendChild(eb);
+  }
 
   // big hexagon, accent filled, with an offset outline in a second accent for depth
   const cx=540, cy=560, r=360;
@@ -505,12 +514,28 @@ function renderQuote(svg, P){
 function renderHowto(svg, P){
   // rounded-hexagon motif top-right, matching the stat hex / quote treatment
   svg.appendChild(el("path", {d:hexPathRound(1000, 150, 150, 30), fill:"none", stroke:P.accent, "stroke-width":7, opacity:"0.5"}));
-  pill(svg, 80, 92, "how to tell", P);
+
+  // eyebrow — same size/colour/style as "THE NUMBER" on the Stat/Hexagon layout, editable, hideable
+  const ebText = (state.howto.eyebrow || "").trim();
+  if(ebText){
+    const eb = el("text", {x:80, y:130, "font-family":"'Libre Franklin',sans-serif","font-weight":800,"font-size":26,"letter-spacing":"0.12em", fill:P.accent}); eb.textContent = ebText.toUpperCase(); svg.appendChild(eb);
+  }
+
   let y = drawHL(svg, state.howto.headline, 80, 232, 800, 52, 64, 820, {color:P.ink, hlColor:P.accent, hlTextColor:P.hlText});
-  y += 60;
+  y += 18;
   const cardAccents = ["#f25294","#fdc52c","#13c364"];
   const cardX = 80, cardW = 920, innerPad = 40;
   const innerW = cardW - innerPad*2;
+
+  // Line-heights for wrapped text stay full-size so multi-line titles/body/questions
+  // never crowd each other. Top padding is a fixed, generous value so the headline
+  // never sits flush against the card's rounded top edge; bottom padding and the
+  // title/body/ask gaps are trimmed just enough to keep the last card clear of the byline.
+  const titleLH = 44, bodyLH = 32, askLH = 32;
+  const topOffset = 54;
+  const bottomPad = 6;
+  const titleGap = 46;   // gap between title and body
+  const bodyGap = 40;    // gap between body and the question
 
   state.howto.cards.forEach((c, i) => {
     const acc = cardAccents[i % 3];
@@ -520,29 +545,21 @@ function renderHowto(svg, P){
     const bodyLines  = drawWrapCount(c.body, 400, 23, innerW);
     const askLines   = drawWrapCount(c.ask, 500, 23, innerW);
 
-    const titleH = titleLines * 44;
-    const bodyH  = bodyLines * 32;
-    const askLabelH = 46;      // the ASK YOURSELF pill + gap
-    const askH   = askLines * 32;
-    const cardH = innerPad + titleH + 16 + bodyH + 26 + askLabelH + askH + innerPad - 8;
+    const titleH = titleLines * titleLH;
+    const bodyH  = bodyLines * bodyLH;
+    const askH   = askLines * askLH;
+    const cardH = topOffset + titleH + titleGap + bodyH + bodyGap + askH + bottomPad;
 
     svg.appendChild(el("rect", {x:cardX, y:y, width:cardW, height:cardH, rx:20, fill:"#ffffff"}));
     // a slim accent stripe down the left edge of the card, tying it to its colour
     svg.appendChild(el("rect", {x:cardX, y:y, width:10, height:cardH, rx:5, fill:acc}));
 
-    let cy = y + innerPad + 30;
-    cy = drawHL(svg, c.title, cardX+innerPad, cy, 800, 32, 44, innerW, {color:"#1b1f42", hlColor:acc, hlTextColor:hlText});
-    cy += 44;
-    cy = drawWrap(svg, c.body, cardX+innerPad, cy, 400, 23, 32, innerW, "#5c6180");
-    cy += 48;
-    // ASK YOURSELF pill
-    const alabel = "ASK YOURSELF";
-    const aw = measure(alabel, 800, 16, "0.08em") + 52;
-    svg.appendChild(el("rect", {x:cardX+innerPad, y:cy-30, width:aw, height:34, rx:17, fill:acc}));
-    svg.appendChild(el("path", {d:hexPath(cardX+innerPad+20, cy-13, 8), fill:hlText}));
-    const al = el("text", {x:cardX+innerPad+36, y:cy-8, "font-family":"'Libre Franklin',sans-serif","font-weight":800,"font-size":16,"letter-spacing":"0.08em", fill:hlText}); al.textContent=alabel; svg.appendChild(al);
-    cy += 28;
-    drawWrap(svg, c.ask, cardX+innerPad, cy, 500, 23, 32, innerW, "#1b1f42");
+    let cy = y + topOffset;
+    cy = drawHL(svg, c.title, cardX+innerPad, cy, 800, 32, titleLH, innerW, {color:"#1b1f42", hlColor:acc, hlTextColor:hlText});
+    cy += titleGap;
+    cy = drawWrap(svg, c.body, cardX+innerPad, cy, 400, 23, bodyLH, innerW, "#5c6180");
+    cy += bodyGap;
+    drawWrap(svg, c.ask, cardX+innerPad, cy, 500, 23, askLH, innerW, "#1b1f42");
 
     y += cardH + 26;
   });
@@ -583,6 +600,11 @@ function fieldsFor(){
     if(sub){ const h=document.createElement('div'); h.className="hint"; h.textContent=sub; f.appendChild(h); }
   };
   if(state.template === "stat"){
+    if(state.statLayout === "giant"){
+      add("Eyebrow (top-left)", state.stat.eyebrowGiant, v=>state.stat.eyebrowGiant=v, "Leave blank to hide it");
+    } else if(state.statLayout === "hex"){
+      add("Eyebrow (top-left)", state.stat.eyebrowHex, v=>state.stat.eyebrowHex=v, "Leave blank to hide it");
+    }
     add("Headline", state.stat.headline, v=>state.stat.headline=v, "", true);
     add("Big stat", state.stat.big, v=>state.stat.big=v);
     add("Stat label", state.stat.label, v=>state.stat.label=v, "", true);
@@ -591,6 +613,7 @@ function fieldsFor(){
     add("Quote", state.quote.quote, v=>state.quote.quote=v, "", true);
     add("Attribution (optional)", state.quote.attrib, v=>state.quote.attrib=v);
   } else {
+    add("Eyebrow (top-left)", state.howto.eyebrow, v=>state.howto.eyebrow=v, "Leave blank to hide it");
     add("Headline", state.howto.headline, v=>state.howto.headline=v, "", true);
     const wrap = document.createElement('div'); wrap.className="multi-fields"; f.appendChild(wrap);
     state.howto.cards.forEach((c, i) => {
@@ -622,7 +645,7 @@ document.getElementById('templateSeg').addEventListener('click', e=>{
 document.getElementById('layoutSeg').addEventListener('click', e=>{
   const b = e.target.closest('button'); if(!b) return;
   document.querySelectorAll('#layoutSeg button').forEach(x=>x.classList.remove('active'));
-  b.classList.add('active'); state.statLayout = b.dataset.l; saveState(); render();
+  b.classList.add('active'); state.statLayout = b.dataset.l; saveState(); fieldsFor(); render();
 });
 document.getElementById('themeToggle').addEventListener('click', e=>{
   const b = e.target.closest('button'); if(!b) return;
