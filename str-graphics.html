@@ -130,6 +130,7 @@ textarea{ min-height:52px; line-height:1.4; }
   <div id="fields"></div>
 
   <button class="download-btn" id="downloadPng">Download PNG</button>
+  <button class="download-btn ghost" id="downloadPdf">Download PDF (for Canva)</button>
   <button class="download-btn ghost" id="downloadSvg">Download SVG</button>
   <div class="saved-note" id="savedNote">Settings save automatically.</div>
 </div>
@@ -640,31 +641,67 @@ document.getElementById('accentRow').addEventListener('click', e=>{
 });
 
 // ---------- export ----------
+// Grab the @font-face rules from the document's own stylesheet so the exported
+// SVG carries its fonts with it. Without this, canvas rasterisation falls back to a
+// default font with different metrics and the auto-sized text overflows the frame.
+function fontFaceCSS(){
+  let css = "";
+  for(const sheet of document.styleSheets){
+    let rules;
+    try{ rules = sheet.cssRules; }catch(e){ continue; }
+    if(!rules) continue;
+    for(const rule of rules){
+      if(rule.type === CSSRule.FONT_FACE_RULE){ css += rule.cssText + "\n"; }
+    }
+  }
+  return css;
+}
 function serializedSVG(){
   const svg = document.getElementById('previewSvg').cloneNode(true);
   svg.setAttribute("xmlns", SVGNS);
+  const style = document.createElementNS(SVGNS, "style");
+  style.textContent = fontFaceCSS();
+  svg.insertBefore(style, svg.firstChild);
   return '<?xml version="1.0" encoding="UTF-8"?>\n' + new XMLSerializer().serializeToString(svg);
 }
 function download(name, blob){
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
 }
+// shared rasteriser: SVG string -> canvas, waiting for fonts first
+function rasterise(cb){
+  const doIt = ()=>{
+    const svgStr = serializedSVG();
+    const img = new Image();
+    const svgBlob = new Blob([svgStr], {type:"image/svg+xml;charset=utf-8"});
+    const url = URL.createObjectURL(svgBlob);
+    img.onload = ()=>{
+      const scale = 2;
+      const cv = document.createElement('canvas'); cv.width = 1080*scale; cv.height = 1350*scale;
+      const cx = cv.getContext('2d'); cx.scale(scale,scale); cx.drawImage(img,0,0);
+      URL.revokeObjectURL(url);
+      cb(cv);
+    };
+    img.onerror = ()=>{ alert("Export hiccup — try again."); URL.revokeObjectURL(url); };
+    img.src = url;
+  };
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(doIt); } else { doIt(); }
+}
 document.getElementById('downloadSvg').addEventListener('click', ()=>{
   download("str-"+state.template+".svg", new Blob([serializedSVG()], {type:"image/svg+xml"}));
 });
 document.getElementById('downloadPng').addEventListener('click', ()=>{
-  const svgStr = serializedSVG();
-  const img = new Image();
-  const svgBlob = new Blob([svgStr], {type:"image/svg+xml;charset=utf-8"});
-  const url = URL.createObjectURL(svgBlob);
-  img.onload = ()=>{
-    const scale = 2;
-    const cv = document.createElement('canvas'); cv.width = 1080*scale; cv.height = 1350*scale;
-    const cx = cv.getContext('2d'); cx.scale(scale,scale); cx.drawImage(img,0,0);
-    cv.toBlob(b=>{ download("str-"+state.template+".png", b); URL.revokeObjectURL(url); }, "image/png");
-  };
-  img.onerror = ()=>{ alert("Export hiccup — try again."); URL.revokeObjectURL(url); };
-  img.src = url;
+  rasterise(cv=>{ cv.toBlob(b=>download("str-"+state.template+".png", b), "image/png"); });
+});
+document.getElementById('downloadPdf').addEventListener('click', ()=>{
+  rasterise(cv=>{
+    const jsPDF = (window.jspdf && window.jspdf.jsPDF) ? window.jspdf.jsPDF : (window.jsPDF);
+    // page sized to the 1080x1350 (4:5) canvas, in points
+    const w = 540, h = 675;
+    const pdf = new jsPDF({orientation:"portrait", unit:"pt", format:[w, h]});
+    pdf.addImage(cv.toDataURL("image/png"), "PNG", 0, 0, w, h);
+    pdf.save("str-"+state.template+".pdf");
+  });
 });
 
 // ---------- init ----------
