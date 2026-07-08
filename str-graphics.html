@@ -152,7 +152,7 @@ const state = {
   theme: "dark",
   byline: "company",
   accent: "#fdc52c",
-  stat: { headline: "The number that should *scare* every sales team.", big: "17%", label: "of a buyer's time is spent with *any one supplier.*", source: "Source: Gartner", eyebrowGiant: "THE STAT", eyebrowHex: "THE NUMBER" },
+  stat: { headline: "The number that should *scare* every sales team.", big: "17%", label: "of a buyer's time is spent with *any one supplier.*", source: "Source: Gartner", eyebrowSplit: "", eyebrowGiant: "THE STAT", eyebrowHex: "THE NUMBER" },
   quote: { quote: "Most sales training fails because it teaches *what* to say, not *when* to say it.", attrib: "" },
   howto: {
     headline: "How to tell which *way* your sales programme failed.",
@@ -428,6 +428,12 @@ function statSplit(svg, P){
   // diagonal slab on the right
   svg.appendChild(el("path", {d:"M600,0 L1080,0 L1080,1350 L460,1350 Z", fill:slabColor}));
 
+  // eyebrow (editable — leave blank to hide it entirely)
+  const ebText = (state.stat.eyebrowSplit || "").trim();
+  if(ebText){
+    const eb = el("text", {x:80, y:120, "font-family":"'Libre Franklin',sans-serif","font-weight":800,"font-size":26,"letter-spacing":"0.12em", fill:P.accent}); eb.textContent = ebText.toUpperCase(); svg.appendChild(eb);
+  }
+
   // headline in navy zone
   drawHL(svg, state.stat.headline, 80, 470, 800, 62, 78, 420, {color:P.ink, hlColor:P.accent, hlTextColor:P.hlText});
 
@@ -602,13 +608,21 @@ function fieldsFor(){
   if(state.template === "stat"){
     if(state.statLayout === "giant"){
       add("Eyebrow (top-left)", state.stat.eyebrowGiant, v=>state.stat.eyebrowGiant=v, "Leave blank to hide it");
+      add("Big stat", state.stat.big, v=>state.stat.big=v);
+      add("Label (bold overlay text)", state.stat.label, v=>state.stat.label=v, "", true);
+      add("Source", state.stat.source, v=>state.stat.source=v);
     } else if(state.statLayout === "hex"){
       add("Eyebrow (top-left)", state.stat.eyebrowHex, v=>state.stat.eyebrowHex=v, "Leave blank to hide it");
+      add("Big stat", state.stat.big, v=>state.stat.big=v);
+      add("Caption (under the number)", state.stat.source, v=>state.stat.source=v);
+      add("Headline (below hexagon)", state.stat.headline, v=>state.stat.headline=v, "", true);
+    } else {
+      add("Eyebrow (top-left)", state.stat.eyebrowSplit, v=>state.stat.eyebrowSplit=v, "Leave blank to hide it");
+      add("Headline", state.stat.headline, v=>state.stat.headline=v, "", true);
+      add("Big stat", state.stat.big, v=>state.stat.big=v);
+      add("Stat label", state.stat.label, v=>state.stat.label=v, "", true);
+      add("Source", state.stat.source, v=>state.stat.source=v);
     }
-    add("Headline", state.stat.headline, v=>state.stat.headline=v, "", true);
-    add("Big stat", state.stat.big, v=>state.stat.big=v);
-    add("Stat label", state.stat.label, v=>state.stat.label=v, "", true);
-    add("Source", state.stat.source, v=>state.stat.source=v);
   } else if(state.template === "quote"){
     add("Quote", state.quote.quote, v=>state.quote.quote=v, "", true);
     add("Attribution (optional)", state.quote.attrib, v=>state.quote.attrib=v);
