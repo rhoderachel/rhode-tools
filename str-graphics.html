@@ -659,6 +659,12 @@ function fontFaceCSS(){
 function serializedSVG(){
   const svg = document.getElementById('previewSvg').cloneNode(true);
   svg.setAttribute("xmlns", SVGNS);
+  // The live preview is sized by CSS (width:100%), which doesn't travel with a
+  // standalone/exported SVG. Without explicit width/height, a lone SVG's intrinsic
+  // size defaults to 300x150, so the export renders at the wrong scale and crops.
+  // Setting these to match the viewBox locks the real 1080x1350 stage in place.
+  svg.setAttribute("width", "1080");
+  svg.setAttribute("height", "1350");
   const style = document.createElementNS(SVGNS, "style");
   style.textContent = fontFaceCSS();
   svg.insertBefore(style, svg.firstChild);
