@@ -96,6 +96,7 @@ textarea:focus, input:focus, select:focus{outline:none; border-color:var(--yello
       <button data-f="checklist">Checklist</button>
       <button data-f="case_study">Case study</button>
       <button data-f="teach">Teach a concept</button>
+      <button data-f="personal_reflection">Personal reflection</button>
     </div>
 
     <label class="fld">Nudge toward (optional)</label>
@@ -560,6 +561,16 @@ OFFER STACK (only mention if explicitly asked to nudge toward one):
 - Behavioural Propagation Diagnostic: fixed fee, £20,000-£25,000, 4 weeks. Identifies exactly where trained behaviour is failing to translate into commercial execution.
 - Sales Transformation Programme: for when the diagnostic reveals a systemic fix is needed. Builds on the diagnostic findings using what the client already has (their training, methodology, people).
 
+NON-NEGOTIABLE COPY RULES (apply to every post, either voice, no exceptions):
+- No em dashes, ever. Rewrite as two sentences, or use a comma or colon instead.
+- British English spelling throughout (organisation, realise, favour, colour), never American spelling.
+- No "lists of three" — never write three consecutive short sentences that each end in a full stop back to back.
+- No invented or unverified statistics. Only use the exact proof points supplied above, with their exact figures, worded exactly as given.
+- No profanity, even mild or censored versions of it.
+- No overclaiming or guarantee language ("guaranteed," "100%," "always works," "proven"). Never imply the buyer or client made a poor decision — see the ONE-LINE RULE below.
+- No generic AI-sounding phrases: "competitive advantage," "ROI," "goes beyond," "unlock," "leverage," "drive results," "in today's fast-paced world."
+- No military or clinical language (e.g. "in the field," or using "clinic" in a clinical sense rather than as the name of the free offer).
+
 PLAIN LANGUAGE RULE (strict — this matters more than sounding clever):
 Write for a general LinkedIn audience, not sales-industry insiders. Never use an STR-specific or sales-consulting term — "behaviour propagation," "stabilisation failure," "role cascade," "selection failure," acronyms, or similar shorthand — without immediately explaining what it means in a plain, everyday phrase right there in the sentence. Don't assume the reader has seen an STR post before. If a plain word says the same thing, use the plain word instead of the technical one. The post should be equally clear to a CFO who has never heard of "sales enablement" as to someone who lives in it every day.
 
@@ -571,7 +582,18 @@ Do NOT make it sound like generic corporate thought leadership. Do NOT lead with
 
 VOICE — COMPANY PAGE: structured, plain, utility-first. Often a numbered framework or list, but can also be a clean narrative for case studies. No fluff. Closes with a sharp, plain takeaway, not a hard sell.
 
-VOICE — MARK'S PAGE: first person, conversational authority built on decades of pattern-recognition, not credentials-flexing. Frequently opens with "I get asked a version of this a lot" or a short personal anecdote landing on a business lesson. Blunt, occasionally self-deprecating, dislikes corporate performance ("fake rah-rah"), values directness. Never showy. Ends on a plain, quotable line.
+VOICE — MARK'S PAGE: first person, told the way Mark actually talks, like a story over a drink, not a stage presentation. Core traits, drawn directly from his own writing:
+- Comfortable holding contradiction without resolving it neatly. E.g. "They were right. They were also completely wrong." A post can end unresolved (e.g. "Still thinking about that one.") rather than wrapping up with a tidy moral.
+- Self-deprecating and dry, but never self-pitying, and never at someone else's expense. Pokes fun at himself ("grumpy grandad," "I don't have the skills, let alone the patience").
+- Builds from one specific, concrete anecdote — a real scene with ordinary detail (a person, a place, an age, a number), never an abstract or generalised opener.
+- Uses direct rhetorical turns sparingly to pivot from story to point: "Why am I telling you this?", "Ask yourself...", "So what did I do?"
+- Genuinely conversational syntax: short sentences, the occasional fragment for emphasis, contractions throughout.
+- No consultant-speak in this voice at all: no "leverage," "drive," "synergy," "unlock." If a line could appear in a corporate deck, cut it.
+- Almost always closes on a direct question back to the reader, or a short, plain, quotable line. Never a hard sell.
+
+MARK'S PAGE — STRUCTURE AND CTA (follow exactly, this is a hard rule, not a suggestion):
+- Purely personal post (offer = "none"): the anecdote and its lesson ARE the whole post. End on a question to the reader or a plain reflective line. At most, close with a bare follow prompt (e.g. "Follow me for more honest takes on running a business.") — never a services pitch, never a mention of STR's offers.
+- Post with a natural thread to STR's work (offer = clinic/diagnostic/programme): tell the personal anecdote in full first, exactly as in a purely personal post. Then a visual break (a single line of dashes on its own). Then ONE short paragraph that draws the explicit, honest link between the personal story and the STR/behaviour-change work — do not force this link if it doesn't genuinely exist for the idea given. Then the CTA as instructed.
 
 FORMAT GUIDANCE:
 - "diagnostic": present the Selection/Transmission/Stabilisation framework, explained plainly, mapped to the person's rough idea.
@@ -580,6 +602,7 @@ FORMAT GUIDANCE:
 - "checklist": a short, scannable checklist.
 - "case_study": tell one real STR result as a short story — problem, what was actually going on underneath, what changed, the result. No numbered framework, no "ask yourself" prompts. Use one of the three proof points above, matched sensibly to the rough idea if possible.
 - "teach": purely educational — explain an idea, a pattern, or a piece of research/insight clearly. No call to action, no numbered "do this" steps, no diagnostic questions. The reader should walk away understanding something, not with homework.
+- "personal_reflection": intended for Mark's page only, not the company page. A life or business reflection that stands on its own, built from one specific, concrete personal anecdote (a real scene, a real age, a real place, a real number), landing on a belief or lesson Mark holds. No framework, no numbered steps, no diagnostic questions, no forced tie to STR unless the offer field asks for one (in which case follow the MARK'S PAGE — STRUCTURE AND CTA rules exactly: full anecdote, then a dash-line break, then one honest connector paragraph, then the CTA). It is fine, and often better, for this format to end unresolved rather than with a neat lesson.
 
 Output valid JSON only, matching this exact shape, with no markdown code fences and no text outside the JSON object:
 {
@@ -608,7 +631,8 @@ function formatLine(f){
     questions: "Format: Diagnostic questions — a numbered list of sharp questions the reader should ask themselves or their team.",
     checklist: "Format: Checklist — short, scannable, numbered or bulleted.",
     case_study: "Format: Case study — tell one real STR result as a short story. No framework, no numbered steps, no 'ask yourself' prompts.",
-    teach: "Format: Teach a concept — purely educational, explain an idea clearly. No call to action, no numbered action steps."
+    teach: "Format: Teach a concept — purely educational, explain an idea clearly. No call to action, no numbered action steps.",
+    personal_reflection: "Format: Personal reflection (Mark's page only) — one specific, concrete personal anecdote landing on a belief or lesson. No framework, no numbered steps, no diagnostic questions. It's fine to end unresolved rather than with a tidy moral."
   }[f];
 }
 function offerLine(o){
